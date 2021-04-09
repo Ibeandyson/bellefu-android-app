@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import {Card, Paragraph, Button, Portal, Modal} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -9,7 +9,6 @@ import NumberFormat from 'react-number-format';
 import {Linking} from 'react-native';
 import ContactModal from '../reusableComponents/ContactModal';
 import Fav from './Fav';
-
 
 const ProductList = React.memo(props => {
     //FOR CONTACT MODAL
@@ -26,14 +25,13 @@ const ProductList = React.memo(props => {
         Linking.openURL(`tel:${number}`);
     };
 
-
-    const chatAuth = () =>{
-        if(props.token === undefined || props.token === null){
-            props.navigation.navigate("Login")
-        }else{
-            props.navigation.navigate('Chat', {title: props.item.title, username: props.item.user.username})
+    const chatAuth = () => {
+        if (props.token === undefined || props.token === null) {
+            props.navigation.navigate('Login');
+        } else {
+            props.navigation.navigate('Chat', {title: props.item.title, username: props.item.user.username});
         }
-    }
+    };
 
     return (
         <View>
@@ -42,13 +40,62 @@ const ProductList = React.memo(props => {
                 <View style={styles.img}>
                     <TouchableOpacity
                         onPress={() => props.navigation.navigate('Detail', {item: props.item, token: props.token})}>
-                        <Image
+                        <ImageBackground
                             resizeMode="cover"
                             style={{height: 110, width: 150, minHeight: 100}}
                             source={{
                                 uri: `https://bellefu.com/images/products/${props.item.slug}/${props.item.images[0]}`
-                            }}
-                        />
+                            }}>
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 5,
+                                    right: 0,
+                                    bottom: 0,
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'flex-start'
+                                }}>
+                                {props.item.plan === 'urgent' ? (
+                                    <Text
+                                        style={{
+                                            color: '#ffffff',
+                                            backgroundColor: 'red',
+                                            padding: 5,
+                                            borderRadius: 10,
+                                            fontSize: 11,
+                                            fontWeight: "bold"
+                                        }}>
+                                        {props.item.plan}
+                                    </Text>
+                                ) : null}
+                                {props.item.plan === 'highlighted' ? (
+                                    <Text
+                                        style={{
+                                            color: '#ffffff',
+                                            backgroundColor: '#76ba1b',
+                                            padding: 5,
+                                            borderRadius: 10,
+                                            fontSize: 11,
+                                            fontWeight: "bold"
+                                        }}>
+                                        {props.item.plan}
+                                    </Text>
+                                ) : null}
+                                {props.item.plan === 'featured' ? (
+                                    <Text
+                                        style={{
+                                            color: '#ffffff',
+                                            backgroundColor: '#ffa500',
+                                            padding: 5,
+                                            fontSize: 11,
+                                            fontWeight: "bold"
+                                        }}>
+                                        {props.item.plan}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        </ImageBackground>
                     </TouchableOpacity>
                     <View style={styles.writUp}>
                         <Paragraph style={styles.title} ellipsizeMode="tail" numberOfLines={2}>
