@@ -111,14 +111,15 @@ const WelcomeScreen = props => {
                             onPress={() => props.navigation.replace('Signup')}>
                             <Text style={{color: 'white', fontSize: 16, fontWeight: '800'}}>SIGN UP</Text>
                         </Button>
-                        <Text style={{marginTop: 20, fontSize: 20, color: '#ffa500', fontWeight: 'bold'}}>OR</Text>
-                        <Button
-                            mode="contained"
-                            color="white"
-                            style={{width: 340, height: 40, borderWidth: 1, backgroundColor: 'black', marginTop: 25}}
+                   
+                        <TouchableOpacity
+                            style={{width: 340, height: 40, marginTop: 25,  justifyContent: 'center',
+                            alignItems: 'center',
+                            alignContent: 'center',
+                            alignSelf: 'center'}}
                             onPress={() => props.navigation.replace('Links')}>
-                            <Text style={{color: 'white', fontSize: 16, fontWeight: '800'}}>Legal Links</Text>
-                        </Button>
+                           <Text style={{marginTop: 20, fontSize: 20, color: '#ffffff', fontWeight: 'bold'}}>ABOUT BELLEFU</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{marginBottom: 50, flexDirection: 'row-reverse', padding: 30}}>
