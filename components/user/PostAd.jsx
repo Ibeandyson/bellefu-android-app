@@ -43,12 +43,12 @@ export default function PostAd(props) {
             price: value
         });
     };
-    const onChangePhone = value => {
-        setProductData({
-            ...productData,
-            phone: value
-        });
-    };
+    // const onChangePhone = value => {
+    //     setProductData({
+    //         ...productData,
+    //         phone: value
+    //     });
+    // };
     const onChangeAddress = value => {
         setProductData({
             ...productData,
@@ -144,7 +144,7 @@ export default function PostAd(props) {
         const payload = new FormData();
         payload.append('title', productData.title);
         payload.append('price', productData.price);
-        payload.append('phone', productData.phone);
+        // payload.append('phone', productData.phone);
         payload.append('address', productData.address);
         payload.append('category', productData.category);
         payload.append('subcategory', productData.subcategory);
@@ -254,13 +254,13 @@ export default function PostAd(props) {
                             value={address}
                             onChangeText={value => onChangeAddress(value)}
                         />
-                        <TextInput
+                        {/* <TextInput
                             style={styles.input}
                             mode="outlined"
                             label="Phone Number"
                             value={phone}
                             onChangeText={value => onChangePhone(value)}
-                        />
+                        /> */}
                         <TextInput
                             style={styles.input}
                             mode="outlined"
