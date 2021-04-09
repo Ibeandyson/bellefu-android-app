@@ -17,10 +17,9 @@ export default function DashboardNav(props) {
         if (token === null || token === undefined) {
             props.navigation.navigate('Login');
         } else {
-
-            AsyncStorage.removeItem('user').then((r) => {
-                setToken(undefined)
-            })
+            AsyncStorage.removeItem('user').then(r => {
+                setToken(undefined);
+            });
         }
     };
 
@@ -29,17 +28,16 @@ export default function DashboardNav(props) {
     }, []);
 
     const startVideo = () => {
-        if(token === null || token === undefined){
-          props.navigation.navigate("Login")
+        if (token === null || token === undefined) {
+            props.navigation.navigate('Login');
         } else {
-    
-          if (Platform.OS === 'android') {
-            requestCameraAndAudioPermission().then(_ => {
-              props.navigation.navigate("Video", {token})
-            });
-          }
+            if (Platform.OS === 'android') {
+                requestCameraAndAudioPermission().then(_ => {
+                    props.navigation.navigate('Video', {token});
+                });
+            }
         }
-      }
+    };
 
     return (
         <View>
@@ -96,9 +94,7 @@ export default function DashboardNav(props) {
                     </TouchableOpacity>
                     <Divider />
                     {/* ACCOUNT */}
-   
 
-                   
                     <TouchableOpacity onPress={() => props.navigation.navigate('Notification')}>
                         <Card style={{borderRadius: 0, marginTop: 20}}>
                             <List.Item
@@ -131,6 +127,16 @@ export default function DashboardNav(props) {
                             <List.Item
                                 title="Settings"
                                 left={props => <List.Icon {...props} icon="power-settings" color="#ffa500" />}
+                            />
+                        </Card>
+                    </TouchableOpacity>
+
+                    <Divider />
+                    <TouchableOpacity onPress={() => props.navigation.navigate('Links')}>
+                        <Card style={{borderRadius: 0}}>
+                            <List.Item
+                                title="About Bellefu"
+                                left={props => <List.Icon {...props} icon="alert-circle-outline" color="#ffa500" />}
                             />
                         </Card>
                     </TouchableOpacity>
