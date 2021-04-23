@@ -1,4 +1,4 @@
-package com.bellefu_digital_agro_connect.bellefu;
+package com.bellefu_farmers_market.bellefu;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;
