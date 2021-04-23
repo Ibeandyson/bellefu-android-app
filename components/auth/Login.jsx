@@ -13,7 +13,7 @@ import {
 import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import {useSelector, useDispatch} from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import Axios from 'axios';
 import Preloader from '../guest/Preloader';
