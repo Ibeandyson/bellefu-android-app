@@ -21,6 +21,7 @@ export default function Verification(props) {
     const [seconds, setSeconds] = useState(0);
     const [number, setNumber] = useState('');
     const [showNumber, setShowNumber] = useState(false);
+    const [call, setcall] = useState(false);
     const [error, setError] = useState('');
     const [idImage, setIdImage] = useState([]);
     const [headerTitle, setHeaderTitle] = useState('Verify Account');
@@ -146,9 +147,9 @@ export default function Verification(props) {
     //======= FUNCTION TO SUBMIT CODE====
 
     const onSubmitCode = async () => {
-      let tokenn = await AsyncStorage.getItem('user');
+        let tokenn = await AsyncStorage.getItem('user');
         setLoading(true);
-        console.log( "the code",phoneCode)
+        console.log('the code', phoneCode);
         Axios.post('https://bellefu.com/api/user/verification/confirm/phone_otp', phoneCode, {
             headers: {
                 Authorization: `Bearer ${tokenn}`,
@@ -163,21 +164,46 @@ export default function Verification(props) {
                 setHeaderTitle('ID Verification');
                 setComponentToShow('id');
                 setError('');
-                if(res){
-                  Alert.alert('Phone Verification Successful')
+                if (res) {
+                    Alert.alert('Phone Verification Successful');
                 }
-              
             })
             .catch(error => {
-                console.log("errdkdk",error);
+                console.log('errdkdk', error);
                 setLoading(false);
                 setError(error);
-                Alert.alert('something went wrong, try again')
+                Alert.alert('something went wrong, try again');
             });
     };
 
     const setOTPrequeastAlertFalse = () => {
         setShowNumber(false);
+    };
+
+    // =======FUNCTION TO MAKE A CALL FOR CODE =========
+    const onCallRequest = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
+        setRequestLoading(true);
+        Axios.get('https://bellefu.com/api/user/verification/request/phone_otp/call', {
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        })
+            .then(res => {
+                console.log(res);
+                setShowNumber(true);
+                setRequestLoading(false);
+                setShowCodeInput(true);
+                setcall(true);
+                setSeconds(180);
+            })
+            .catch(error => {
+                console.log('this is error: ', error);
+                setRequestLoading(false);
+                setError('Something went wrong');
+            });
     };
 
     return (
@@ -188,8 +214,8 @@ export default function Verification(props) {
 
             {showNumber === true ? (
                 Alert.alert(
-                    'Successfully Sent',
-                    `OTP has been sent to ${number}`,
+                    'Successfully',
+                    `an action have been made to this number: ${number}`,
                     [
                         {
                             text: 'Close',
@@ -221,16 +247,12 @@ export default function Verification(props) {
                                     onChangeText={value => onPhoneChange(value)}
                                 />
                             </View>
-                           
-                                <View style={{padding: 20, marginTop: 50}}>
-                                    <Button
-                                        onPress={onSubmitCode}
-                                        mode="contained"
-                                        style={{backgroundColor: '#ffa500'}}>
-                                        <Text style={{color: 'white'}}>Submit Code</Text>
-                                    </Button>
-                                </View>
-                
+
+                            <View style={{padding: 20, marginTop: 50}}>
+                                <Button onPress={onSubmitCode} mode="contained" style={{backgroundColor: '#ffa500'}}>
+                                    <Text style={{color: 'white'}}>Submit Code</Text>
+                                </Button>
+                            </View>
 
                             <View style={{marginTop: 50}}>
                                 {requestLoading && <ActivityIndicator animating={true} color="rgba(49, 180, 4, 1)" />}
@@ -238,7 +260,7 @@ export default function Verification(props) {
 
                             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
                                 <Text style={{fontSize: 20, fontWeight: 'bold', justifyContent: 'center'}}>
-                                    Resend Code
+                                    Take aother request action in
                                 </Text>
                                 {seconds > 0 ? (
                                     <Text
@@ -250,21 +272,33 @@ export default function Verification(props) {
                                             width: 35,
                                             height: 35,
                                             borderRadius: 2,
-                                            backgroundColor: '#ffa500',
-                                            color: 'white'
+                                            color: 'black'
                                         }}>
                                         {seconds}
                                     </Text>
                                 ) : null}
                             </View>
                             {seconds === 0 ? (
-                                <View style={{padding: 20, marginTop: 50}}>
-                                    <Button
-                                        onPress={onCodeRequest}
-                                        mode="contained"
-                                        style={{backgroundColor: '#ffa500'}}>
-                                        <Text style={{color: 'white'}}>Resend Code</Text>
-                                    </Button>
+                                <View>
+                                    {call === true ? (
+                                        <View style={{padding: 20, marginTop: 50}}>
+                                            <Button
+                                                onPress={onCallRequest}
+                                                mode="contained"
+                                                style={{backgroundColor: '#ffa500'}}>
+                                                <Text style={{color: 'white'}}>Call Again</Text>
+                                            </Button>
+                                        </View>
+                                    ) : (
+                                        <View style={{padding: 20, marginTop: 50}}>
+                                            <Button
+                                                onPress={onCodeRequest}
+                                                mode="contained"
+                                                style={{backgroundColor: '#ffa500'}}>
+                                                <Text style={{color: 'white'}}>Resend Code</Text>
+                                            </Button>
+                                        </View>
+                                    )}
                                 </View>
                             ) : null}
                         </View>
@@ -279,7 +313,24 @@ export default function Verification(props) {
                                             onPress={onCodeRequest}
                                             mode="contained"
                                             style={{backgroundColor: '#ffa500'}}>
-                                            <Text style={{color: 'white'}}>Request Code</Text>
+                                            <Text style={{color: 'white'}}>Request Code SMS</Text>
+                                        </Button>
+                                    </View>
+                                </View>
+                            )}
+
+                            <View style={{justifyContent: "center" , alignItems: "center"}}>
+                                <Text style={{fontWeight: "bold", fontSize: 20}}>OR</Text>
+                            </View>
+                            {/* maKE CALL FOR CODE */}
+                            {!requestLoading && (
+                                <View>
+                                    <View style={{padding: 20, marginTop: 1}}>
+                                        <Button
+                                            onPress={onCallRequest}
+                                            mode="contained"
+                                            style={{backgroundColor: '#ffa500'}}>
+                                            <Text style={{color: 'white'}}>Request CALL CODE</Text>
                                         </Button>
                                     </View>
                                 </View>
