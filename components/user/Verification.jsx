@@ -38,7 +38,6 @@ export default function Verification(props) {
             multiple: true
         }).then(images => {
             setImagesUri(images);
-            setImageData(images);
         });
     };
 
@@ -132,10 +131,6 @@ export default function Verification(props) {
             });
     };
 
-    const onChangHandlerImage = e => {
-        setIdImage(e);
-    };
-
     const {verification_code} = phoneCode;
     const onPhoneChange = value => {
         setPhoneCode({
@@ -205,6 +200,76 @@ export default function Verification(props) {
                 setError('Something went wrong');
             });
     };
+
+    // ========== FUNCTION TO SUBMIT ID =======
+    const onIdSubmit = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
+        setLoading(true);
+        const payload = new FormData();
+        imagesUri.forEach((image, index) => {
+            payload.append(`id_images[${index}]`, {
+                uri: Platform.OS === 'ios' ? `file:///${image.path}` : image.path,
+                type: 'image/jpeg',
+                name: 'image.jpg'
+            });
+        });
+
+        Axios({
+            method: 'POST',
+            url: 'https://bellefu.com/api/user/verification/request/id',
+            data: payload,
+
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': `multipart/form-data; boundary=${payload._boundary}`,
+                Accept: 'application/json'
+            }
+        })
+            .then(res => {
+                setLoading(false);
+                setPendingID(true);
+                setError('');
+                if (res) {
+                    Alert.alert(
+                      'Successful',
+                      `ID Verification have been received but pending`,
+                  )
+                }
+            })
+            .catch(error => {
+                Alert.alert('something went wrong, try again');
+                console.log(error.response.data);
+                setLoading(false);
+                setError(error.response.data.message);
+            });
+    };
+
+
+// ======== FUNCTION TO SUBMIT KYC ========
+    const onKycSubmit = (e)=> {
+      setLoading(true)
+      let formData = new FormData()
+      formData.append('id_images', idImage)
+      Axios
+      .get('/api/user/verification/request/kyc', {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+      .then(res => {
+        setLoading(false)
+        setHeaderTitle('KYC Verification')
+        setComponentToShow('kyc')
+        setPendingKYC(true)
+        setError('');
+      })
+      .catch(error => {
+        console.log(error)
+        setLoading(false)
+        setError(error.response.data.message);
+      });
 
     return (
         <View>
@@ -319,8 +384,8 @@ export default function Verification(props) {
                                 </View>
                             )}
 
-                            <View style={{justifyContent: "center" , alignItems: "center"}}>
-                                <Text style={{fontWeight: "bold", fontSize: 20}}>OR</Text>
+                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                <Text style={{fontWeight: 'bold', fontSize: 20}}>OR</Text>
                             </View>
                             {/* maKE CALL FOR CODE */}
                             {!requestLoading && (
@@ -369,12 +434,22 @@ export default function Verification(props) {
                         <Text style={{marginBottom: 10}}>*Upload ID images</Text>
                         <Button onPress={pickImage} mode="contained" style={{backgroundColor: '#ffa500'}}>
                             <AntDesign name="cloudupload" size={23} color="white" />
-                            <Text style={{color: 'white'}}>Submit</Text>
+                            <Text style={{color: 'white'}}>UPLOAD ID</Text>
+                        </Button>
+                    </View>
+
+                    <View style={{padding: 20, marginTop: 50}}>
+                        <Button onPress={onIdSubmit} mode="contained" style={{backgroundColor: '#ffa500'}}>
+                            <Text style={{color: 'white'}}>SUBMIT</Text>
                         </Button>
                     </View>
                 </View>
             ) : null}
             {/* =========ID END===== */}
+            <View style={{flex: 1, justifyContent: 'center',marginTop: 100, padding: 10}}>
+                <Text style={{fontWeight: 'bold', fontSize: 20}} >Your ID verification is pending. 
+                If accepted, the last step is KYC request.</Text>
+            </View>
 
             {/* =========KYC START===== */}
             {componentToShow === 'kyc' ? (
