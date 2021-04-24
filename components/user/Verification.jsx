@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image, Text, ScrollView, Alert} from 'react-native';
+import {TextInput} from 'react-native-paper';
 import {ActivityIndicator} from 'react-native-paper';
 import CodeInput from 'react-native-code-input';
 import {Button} from 'react-native-paper';
@@ -14,7 +15,9 @@ export default function Verification(props) {
     const [imagesUri, setImagesUri] = useState([]);
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false);
-    const [phoneCode, setPhoneCode] = useState([]);
+    const [phoneCode, setPhoneCode] = useState({
+        verification_code: ''
+    });
     const [seconds, setSeconds] = useState(0);
     const [number, setNumber] = useState('');
     const [showNumber, setShowNumber] = useState(false);
@@ -39,12 +42,16 @@ export default function Verification(props) {
     };
 
     // ======= loading useer profile=====
-    let url = '/api/user/profile/details';
+    let url = 'https://bellefu.com/api/user/profile/details';
 
-    useEffect(() => {
+    const loadUserProfile = async () => {
+        setLoading(true);
+        let tokenn = await AsyncStorage.getItem('user');
+        await setToken(tokenn);
+
         Axios.get(url, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${tokenn}`,
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             }
@@ -78,6 +85,10 @@ export default function Verification(props) {
             .catch(e => {
                 setError('Something Went Wrong');
             });
+    };
+
+    useEffect(() => {
+        loadUserProfile();
     }, []);
 
     // =======setting timer for otp requstion btn
@@ -96,11 +107,12 @@ export default function Verification(props) {
     });
 
     // =======FUNCTION TO REQUST FOR CODE =========
-    const onCodeRequest = a => {
+    const onCodeRequest = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
         setRequestLoading(true);
-        Axios.get('/api/user/verification/request/phone_otp', {
+        Axios.get('https://bellefu.com/api/user/verification/request/phone_otp/sms', {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${tokenn}`,
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             }
@@ -123,132 +135,208 @@ export default function Verification(props) {
         setIdImage(e);
     };
 
-    const onPhoneChange = e => {
-        console.log(e);
-        setPhoneCode(e);
+    const {verification_code} = phoneCode;
+    const onPhoneChange = value => {
+        setPhoneCode({
+            ...phoneCode,
+            verification_code: value
+        });
     };
 
     //======= FUNCTION TO SUBMIT CODE====
-    useEffect(
-        () => {
-            if (phoneCode.length === 6) {
-                setLoading(true);
-                Axios.post(
-                    '/api/user/verification/confirm/phone_otp',
-                    {verification_code: Number(phoneCode)},
+
+    const onSubmitCode = async () => {
+      let tokenn = await AsyncStorage.getItem('user');
+        setLoading(true);
+        console.log( "the code",phoneCode)
+        Axios.post('https://bellefu.com/api/user/verification/confirm/phone_otp', phoneCode, {
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        })
+            .then(res => {
+                console.log(res);
+                setLoading(false);
+                setShowNumber(true);
+                setHeaderTitle('ID Verification');
+                setComponentToShow('id');
+                setError('');
+                if(res){
+                  Alert.alert('Phone Verification Successful')
+                }
+              
+            })
+            .catch(error => {
+                console.log("errdkdk",error);
+                setLoading(false);
+                setError(error);
+                Alert.alert('something went wrong, try again')
+            });
+    };
+
+    const setOTPrequeastAlertFalse = () => {
+        setShowNumber(false);
+    };
+
+    return (
+        <View>
+            {loading ? <Preloader /> : null}
+
+            {error.length > 0 ? Alert.alert(`${error}`) : null}
+
+            {showNumber === true ? (
+                Alert.alert(
+                    'Successfully Sent',
+                    `OTP has been sent to ${number}`,
+                    [
+                        {
+                            text: 'Close',
+                            onPress: () => {
+                                setOTPrequeastAlertFalse();
+                            }
+                        }
+                    ],
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json'
+                        cancelable: true,
+                        onDismiss: () => {
+                            setOTPrequeastAlertFalse();
                         }
                     }
                 )
-                    .then(res => {
-                        console.log(res);
-                        setLoading(false);
-                        setShowNumber(false);
-                        setHeaderTitle('ID Verification');
-                        setComponentToShow('id');
-                        setError('');
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        setLoading(false);
-                        setError(error.response.data.message);
-                    });
-            }
-        },
-        [phoneCode.length]
-    );
-
-    useEffect(() => {
-        async function getToken() {
-            let tokenn = await AsyncStorage.getItem('user');
-            await setToken(tokenn);
-        }
-        getToken();
-    }, []);
-    return (
-        <View>
-            {loading && (
-                <View style={{height: '100vh', width: '100%'}}>
-                    <Preloader />
-                </View>
-            )}
-
-            {error.length > 0 && Alert.alert(`${error}`)}
-            {showNumber && Alert.alert(`OTP has been sent to ${number}`)}
+            ) : null}
 
             {/* =========OTP START===== */}
-            {showCodeInput && (
-                <CodeInput
-                    useRef="codeInputRef2"
-                    activeColor="rgba(49, 180, 4, 1)"
-                    inactiveColor="rgba(49, 180, 4, 1.3)"
-                    autoFocus={true}
-                    inputPosition="center"
-                    size={50}
-                    keyboardType="numeric"
-                    codeLength={6}
-                    onFulfill={code => onFinishCheckingCode1(code)}
-                    containerStyle={{marginTop: 30}}
-                    codeInputStyle={{borderWidth: 1.5}}
-                    onChange={onPhoneChange}
-                />
-            )}
-
-            {!showCodeInput && (
+            {componentToShow === 'phone' ? (
                 <View>
-                    {!requestLoading && (
+                    {showCodeInput ? (
                         <View>
-                            <View style={{padding: 20, marginTop: 50}}>
-                                <Button onPress={onCodeRequest} mode="contained" style={{backgroundColor: '#ffa500'}}>
-                                    <AntDesign name="cloudupload" size={23} color="white" />
-                                    <Text style={{color: 'white'}}>Request Code</Text>
-                                </Button>
+                            <View style={{padding: 20}}>
+                                <TextInput
+                                    mode="outlined"
+                                    name="code"
+                                    label="code"
+                                    value={verification_code}
+                                    onChangeText={value => onPhoneChange(value)}
+                                />
+                            </View>
+                           
+                                <View style={{padding: 20, marginTop: 50}}>
+                                    <Button
+                                        onPress={onSubmitCode}
+                                        mode="contained"
+                                        style={{backgroundColor: '#ffa500'}}>
+                                        <Text style={{color: 'white'}}>Submit Code</Text>
+                                    </Button>
+                                </View>
+                
+
+                            <View style={{marginTop: 50}}>
+                                {requestLoading && <ActivityIndicator animating={true} color="rgba(49, 180, 4, 1)" />}
+                            </View>
+
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
+                                <Text style={{fontSize: 20, fontWeight: 'bold', justifyContent: 'center'}}>
+                                    Resend Code
+                                </Text>
+                                {seconds > 0 ? (
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                            justifyContent: 'center',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
+                                            width: 35,
+                                            height: 35,
+                                            borderRadius: 2,
+                                            backgroundColor: '#ffa500',
+                                            color: 'white'
+                                        }}>
+                                        {seconds}
+                                    </Text>
+                                ) : null}
+                            </View>
+                            {seconds === 0 ? (
+                                <View style={{padding: 20, marginTop: 50}}>
+                                    <Button
+                                        onPress={onCodeRequest}
+                                        mode="contained"
+                                        style={{backgroundColor: '#ffa500'}}>
+                                        <Text style={{color: 'white'}}>Resend Code</Text>
+                                    </Button>
+                                </View>
+                            ) : null}
+                        </View>
+                    ) : null}
+
+                    {!showCodeInput && (
+                        <View>
+                            {!requestLoading && (
+                                <View>
+                                    <View style={{padding: 20, marginTop: 50}}>
+                                        <Button
+                                            onPress={onCodeRequest}
+                                            mode="contained"
+                                            style={{backgroundColor: '#ffa500'}}>
+                                            <Text style={{color: 'white'}}>Request Code</Text>
+                                        </Button>
+                                    </View>
+                                </View>
+                            )}
+
+                            <View style={{marginTop: 50}}>
+                                {requestLoading && <ActivityIndicator animating={true} color="rgba(49, 180, 4, 1)" />}
                             </View>
                         </View>
                     )}
-
-                    <View>{requestLoading && <ActivityIndicator animating={true} color="rgba(49, 180, 4, 1)" />}</View>
                 </View>
-            )}
-
+            ) : null}
             {/* =========OTP END===== */}
 
             {/* =========ID START===== */}
-            <ScrollView horizontal={true}>
-                <View
-                    style={{
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                        marginTop: 10,
-                        alignSelf: 'center',
-                        widht: 20
-                    }}>
-                    {imagesUri.map(images => (
-                        <Image source={{uri: images.path}} style={{width: 100, height: 100, marginHorizontal: 5}} />
-                    ))}
+            {componentToShow === 'id' ? (
+                <View>
+                    <ScrollView horizontal={true}>
+                        <View
+                            style={{
+                                justifyContent: 'center',
+                                flexDirection: 'row',
+                                marginTop: 10,
+                                alignSelf: 'center',
+                                widht: 20
+                            }}>
+                            {imagesUri.map(images => (
+                                <Image
+                                    source={{uri: images.path}}
+                                    style={{width: 100, height: 100, marginHorizontal: 5}}
+                                />
+                            ))}
+                        </View>
+                    </ScrollView>
+                    <View style={{padding: 20, marginTop: 50}}>
+                        <Text style={{marginBottom: 10}}>*Upload ID images</Text>
+                        <Button onPress={pickImage} mode="contained" style={{backgroundColor: '#ffa500'}}>
+                            <AntDesign name="cloudupload" size={23} color="white" />
+                            <Text style={{color: 'white'}}>Submit</Text>
+                        </Button>
+                    </View>
                 </View>
-            </ScrollView>
-            <View style={{padding: 20, marginTop: 50}}>
-                <Text style={{marginBottom: 10}}>*Upload ID images</Text>
-                <Button onPress={pickImage} mode="contained" style={{backgroundColor: '#ffa500'}}>
-                    <AntDesign name="cloudupload" size={23} color="white" />
-                    <Text style={{color: 'white'}}>Submit</Text>
-                </Button>
-            </View>
+            ) : null}
             {/* =========ID END===== */}
 
             {/* =========KYC START===== */}
-            <View style={{padding: 20, marginTop: 10}}>
-                <Text style={{marginBottom: 10}}>*Click the button below to request for KYC</Text>
-                <Button mode="contained" style={{backgroundColor: '#ffa500'}}>
-                    <Octicons name="git-pull-request" size={23} color="white" />
-                    <Text style={{color: 'white'}}>REQUEST</Text>
-                </Button>
-            </View>
+            {componentToShow === 'kyc' ? (
+                <View>
+                    <View style={{padding: 20, marginTop: 10}}>
+                        <Text style={{marginBottom: 10}}>*Click the button below to request for KYC</Text>
+                        <Button mode="contained" style={{backgroundColor: '#ffa500'}}>
+                            <Octicons name="git-pull-request" size={23} color="white" />
+                            <Text style={{color: 'white'}}>REQUEST</Text>
+                        </Button>
+                    </View>
+                </View>
+            ) : null}
             {/* =========KYC END===== */}
         </View>
     );

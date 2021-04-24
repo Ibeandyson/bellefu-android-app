@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, Image} from 'react-native';
-import { Button, TextInput} from 'react-native-paper';
+import {Button, TextInput} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-crop-picker';
 import Preloader from '../guest/Preloader';
@@ -21,12 +21,12 @@ export default function UpadateProfile(props) {
         state_code: '',
         lga_code: '',
         address: '',
-        bio: '',
+        bio: ''
     });
     const [countryData, setCountryData] = useState([]);
     const [stateData, setStateData] = useState([]);
     const [lgaData, setLgaData] = useState([]);
-    const [sucess, setSucess] = useState('')
+    const [sucess, setSucess] = useState('');
     const {first_name, last_name, phone, country_code, state_code, lga_code, address, bio} = updateData;
 
     const onChangeFirstName = value => {
@@ -79,11 +79,10 @@ export default function UpadateProfile(props) {
         });
     };
 
-
     //=====image picker======
     const pickImage = () => {
         ImagePicker.openPicker({
-            mediaType: 'photo',
+            mediaType: 'photo'
         }).then(images => {
             setImageUri(images);
         });
@@ -109,11 +108,9 @@ export default function UpadateProfile(props) {
 
                 axios.get(stateUrl).then(res => {
                     setStateData(res.data.states);
-                   
                 });
             })
-            .catch(e => {
-            });
+            .catch(e => {});
     };
 
     // call country api
@@ -130,11 +127,9 @@ export default function UpadateProfile(props) {
     useEffect(
         () => {
             async function loadLga() {
-                await axios
-                    .get(lgaUrl)
-                    .then(res => {
-                        setLgaData(res.data.lgas);
-                    })
+                await axios.get(lgaUrl).then(res => {
+                    setLgaData(res.data.lgas);
+                });
             }
             loadLga();
         },
@@ -149,48 +144,58 @@ export default function UpadateProfile(props) {
         [stateData.length]
     );
 
+    const onSubmitHandle = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
+        await setToken(tokenn);
+        const payload = new FormData();
+        payload.append('first_name', updateData.first_name);
+        payload.append('last_name', updateData.last_name);
+        payload.append('lga_code', updateData.lga_code);
+        payload.append('phone', updateData.phone);
+        payload.append('state_code', updateData.state_code);
+        payload.append('country_code', updateData.country_code);
+        payload.append('address', updateData.address);
+        payload.append('bio', updateData.bio);
+        console.log(imageUri);
 
-    
-      const onSubmitHandle = () => {
-        // let localUri = imageData.uri;
-        // let filename = localUri.split('/').pop();
-      
-        // // Infer the type of the image
-        // let match = /\.(\w+)$/.exec(filename);
-        // let type = match ? `image/${match[1]}` : `image`;
-
-          const payload = new FormData();
-          payload.append("first_name", updateData.first_name);
-          payload.append("last_name", updateData.last_name);
-          payload.append("lga_code", updateData.lga_code);
-          payload.append("phone", updateData.phone);
-          payload.append("state_code", updateData.state_code);
-          payload.append("country_code", updateData.country_code);
-          payload.append("address", updateData.address);
-          payload.append("bio", updateData.bio);
-         
+        if(Object.keys(imageUri).length){
             payload.append(`avatar`, {
-                uri: Platform.OS === 'ios' ? `file:///${ imageUri.path}` :  imageUri.path,
+                uri: Platform.OS === 'ios' ? `file:///${imageUri.path}` : imageUri.path,
                 type: 'image/jpeg',
                 name: 'image.jpg'
             });
-      
-        //   payload.append('avatar', { uri: localUri, name: filename, type});
-        
-        axios.post("https://bellefu.com/api/user/profile/update", payload, {
-            
-                headers: {
-                    
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    Accept: 'application/json'
-            },
-          }).then(res => {
-            setSucess(res.data.message)
-            Alert.alert(res.data.message)
-          }).catch(e => {
-          })
+
+        }
+
+        axios({
+            method: 'POST',
+            url: 'https://bellefu.com/api/user/profile/update',
+            data: payload,
+
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': `multipart/form-data; boundary=${payload._boundary}`,
+                Accept: 'application/json'
+            }
+        })
+            .then(res => {
+                setSucess(res.data.message);
+                Alert.alert(res.data.message);
+                // console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+                console.log(
+                    JSON.stringify(
+                        {
+                            LogError: {...err}
+                        },
+                        null,
+                        2
+                    )
+                );
+            });
+
     };
 
     return (
@@ -345,12 +350,12 @@ export default function UpadateProfile(props) {
                                 <Text style={{color: 'white'}}>upload image</Text>
                             </Button>
                         </View>
-                        <View style={{justifyContent: 'center', marginTop: 2, alignSelf: "center"}}>
-                          <Image source={{uri: imageUri.path}} style={{width: 200, height: 200}} />
+                        <View style={{justifyContent: 'center', marginTop: 2, alignSelf: 'center'}}>
+                            <Image source={{uri: imageUri.path}} style={{width: 200, height: 200}} />
                         </View>
                         <Button
                             style={styles.btn}
-                            onPress={() => onSubmitHandle(updateData,imageUri)}
+                            onPress={onSubmitHandle}
                             mode="contained"
                             icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
                             <Text style={{color: 'white'}}> Post</Text>
@@ -373,7 +378,7 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     btn: {
-        marginTop: 40,
+        marginTop: 5,
         color: 'white',
         backgroundColor: '#ffa500'
     }

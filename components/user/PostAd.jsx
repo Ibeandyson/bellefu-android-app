@@ -29,7 +29,7 @@ export default function PostAd(props) {
         tags: ''
     });
 
-    const {subcategory, category, plan, title, price, phone, address, description, tags} = productData;
+    const {subcategory, category, plan, title, price, address, description, tags} = productData;
 
     const onChangeTitle = value => {
         setProductData({
@@ -175,9 +175,14 @@ export default function PostAd(props) {
             })
             .catch(error => {
                 setLoading(false);
-                if (error.response.data) {
+              
+                if (error.response.data.errors.verification) {
+                    Alert.alert(`${error.response.data.errors.verification}`);
+                  
+                }else if(error.response.data){
                     Alert.alert('All field are required, check  for any empty field and fill up');
                 }
+                console.log()
             });
     };
 

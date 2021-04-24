@@ -45,7 +45,7 @@ const theme = {
   },
 };
 
-var bar_bgcolor = '#76ba1b';
+
 
 const Stack = createStackNavigator();
 
