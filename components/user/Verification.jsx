@@ -23,7 +23,6 @@ export default function Verification(props) {
     const [showNumber, setShowNumber] = useState(false);
     const [call, setcall] = useState(false);
     const [error, setError] = useState('');
-    const [idImage, setIdImage] = useState([]);
     const [headerTitle, setHeaderTitle] = useState('Verify Account');
     const [componentToShow, setComponentToShow] = useState('');
     const [requestLoading, setRequestLoading] = useState(false);
@@ -80,6 +79,8 @@ export default function Verification(props) {
                 ) {
                     setHeaderTitle('KYC Verification');
                     setComponentToShow('kyc');
+                } else if (res.data.user.kyc_verification.status !== 'pending') {
+                    setPendingKYC(true);
                 }
             })
             .catch(e => {
@@ -230,10 +231,7 @@ export default function Verification(props) {
                 setPendingID(true);
                 setError('');
                 if (res) {
-                    Alert.alert(
-                      'Successful',
-                      `ID Verification have been received but pending`,
-                  )
+                    Alert.alert('Successful', `ID Verification have been received but pending`);
                 }
             })
             .catch(error => {
@@ -244,32 +242,34 @@ export default function Verification(props) {
             });
     };
 
-
-// ======== FUNCTION TO SUBMIT KYC ========
-    const onKycSubmit = (e)=> {
-      setLoading(true)
-      let formData = new FormData()
-      formData.append('id_images', idImage)
-      Axios
-      .get('/api/user/verification/request/kyc', {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      })
-      .then(res => {
-        setLoading(false)
-        setHeaderTitle('KYC Verification')
-        setComponentToShow('kyc')
-        setPendingKYC(true)
-        setError('');
-      })
-      .catch(error => {
-        console.log(error)
-        setLoading(false)
-        setError(error.response.data.message);
-      });
+    // ========= FUNCTION TO REQUEST FOR KYC
+    const onKycSubmit = async e => {
+        let tokenn = await AsyncStorage.getItem('user');
+        setLoading(true);
+        Axios.get('https://bellefu.com/api/user/verification/request/kyc', {
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        })
+            .then(res => {
+                setLoading(false);
+                setHeaderTitle('KYC Verification');
+                setComponentToShow('kyc');
+                setPendingKYC(true);
+                setError('');
+                if (res) {
+                    Alert.alert('Successful', 'Your KYC request has been received.');
+                }
+            })
+            .catch(error => {
+                Alert.alert('something went wrong, try again');
+                console.log(error);
+                setLoading(false);
+                setError(error.response.data.message);
+            });
+    };
 
     return (
         <View>
@@ -446,23 +446,41 @@ export default function Verification(props) {
                 </View>
             ) : null}
             {/* =========ID END===== */}
-            <View style={{flex: 1, justifyContent: 'center',marginTop: 100, padding: 10}}>
-                <Text style={{fontWeight: 'bold', fontSize: 20}} >Your ID verification is pending. 
-                If accepted, the last step is KYC request.</Text>
-            </View>
+            {pendingID === true ? (
+                <View style={{flex: 1, justifyContent: 'center', marginTop: 100, padding: 10}}>
+                    <Text style={{fontWeight: 'bold', fontSize: 20}}>
+                        Your ID verification is pending. If accepted, the last step is KYC request.
+                    </Text>
+                </View>
+            ) : null}
 
             {/* =========KYC START===== */}
             {componentToShow === 'kyc' ? (
                 <View>
-                    <View style={{padding: 20, marginTop: 10}}>
-                        <Text style={{marginBottom: 10}}>*Click the button below to request for KYC</Text>
-                        <Button mode="contained" style={{backgroundColor: '#ffa500'}}>
-                            <Octicons name="git-pull-request" size={23} color="white" />
-                            <Text style={{color: 'white'}}>REQUEST</Text>
-                        </Button>
+                    <View>
+                        <View style={{padding: 20, marginTop: 10}}>
+                            <Text style={{marginBottom: 10}}>*Click the button below to request for KYC</Text>
+                            <Button onPress={onKycSubmit} mode="contained" style={{backgroundColor: '#ffa500'}}>
+                                <Octicons name="git-pull-request" size={23} color="white" />
+                                <Text style={{color: 'white'}}>REQUEST</Text>
+                            </Button>
+                        </View>
                     </View>
+
+                    {pendingKYC === true ? (
+                        <View style={{flex: 1, justifyContent: 'center', marginTop: 100, padding: 10}}>
+                            <Text style={{fontWeight: 'bold', fontSize: 20}}>YOU ARE FULLY VERIFIED</Text>
+                        </View>
+                    ) : (
+                        <View style={{flex: 1, justifyContent: 'center', marginTop: 100, padding: 10}}>
+                            <Text style={{fontWeight: 'bold', fontSize: 20}}>
+                                Your KYC verification is pending. If accepted, you are fully verified.
+                            </Text>
+                        </View>
+                    )}
                 </View>
             ) : null}
+
             {/* =========KYC END===== */}
         </View>
     );
