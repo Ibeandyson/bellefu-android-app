@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image, Text, ScrollView, Alert} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {ActivityIndicator} from 'react-native-paper';
-import CodeInput from 'react-native-code-input';
 import {Button} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
