@@ -46,6 +46,7 @@ const ProductList = React.memo(props => {
                             source={{
                                 uri: `https://bellefu.com/images/products/${props.item.slug}/${props.item.images[0]}`
                             }}>
+                                <View>
                             <View
                                 style={{
                                     position: 'absolute',
@@ -64,7 +65,7 @@ const ProductList = React.memo(props => {
                                             padding: 5,
                                             borderRadius: 10,
                                             fontSize: 11,
-                                            fontWeight: "bold"
+                                            fontWeight: 'bold'
                                         }}>
                                         {props.item.plan}
                                     </Text>
@@ -77,7 +78,7 @@ const ProductList = React.memo(props => {
                                             padding: 5,
                                             borderRadius: 10,
                                             fontSize: 11,
-                                            fontWeight: "bold"
+                                            fontWeight: 'bold'
                                         }}>
                                         {props.item.plan}
                                     </Text>
@@ -89,11 +90,38 @@ const ProductList = React.memo(props => {
                                             backgroundColor: '#ffa500',
                                             padding: 5,
                                             fontSize: 11,
-                                            fontWeight: "bold"
+                                            borderRadius: 10,
+                                            fontWeight: 'bold'
                                         }}>
                                         {props.item.plan}
                                     </Text>
                                 ) : null}
+
+                                
+                            </View>
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    top: 60,
+                                    left: 5,
+                                    right: 0,
+                                    bottom: 0,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    {props.item.inStock === false ? (
+                                    <Text
+                                        style={{
+                                            color: '#ffffff',
+                                            backgroundColor: '#000000',
+                                            padding: 5,
+                                            fontSize: 11,
+                                            fontWeight: 'bold'
+                                        }}>
+                                        OUT OF STOCK
+                                    </Text>
+                                ) : null}
+                                </View>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
