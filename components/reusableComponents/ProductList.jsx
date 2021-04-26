@@ -1,10 +1,9 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity} from 'react-native';
-import {Card, Paragraph, Button, Portal, Modal} from 'react-native-paper';
+import {View, Text, StyleSheet,ImageBackground, TouchableOpacity} from 'react-native';
+import {Card, Paragraph, Button,} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Icon from 'react-native-vector-icons/AntDesign';
 import NumberFormat from 'react-number-format';
 import {Linking} from 'react-native';
 import ContactModal from '../reusableComponents/ContactModal';
