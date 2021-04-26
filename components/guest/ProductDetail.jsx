@@ -292,7 +292,7 @@ export default function ProductDetail(props) {
             />
             <Text style={{ opacity: 0.7, fontSize: 13, paddingLeft: 10, color: "#1a1919", }}>Location:</Text>
             <Text style={{ fontSize: 13, paddingLeft: 10, color: "#1a1919" }}>
-              {productsDataDetail.admin1}, {productsDataDetail.admin2}
+              {productsDataDetail.admin1.name}, {productsDataDetail.admin2.name }
             </Text>
           </View>
           <View style={{ flexDirection: "row", marginTop: 20 }}>
