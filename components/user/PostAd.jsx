@@ -8,20 +8,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {Picker} from '@react-native-community/picker';
 
-
 export default function PostAd(props) {
     const [checked, setChecked] = React.useState('');
     const [imagesUri, setImagesUri] = useState([]);
     const [token, setToken] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSucess] = useState([]);
+    const [stateData, setStateData] = useState([]);
+    const [lgaData, setLgaData] = useState([]);
+    const [profile, setProfile] = useState({});
 
     const [productDetail, setProductDetail] = useState({});
     const [productData, setProductData] = useState({
         title: '',
         price: '',
         phone: '',
-        address: '',
+        state_code: '',
+        lga_code: '',
         category: '',
         subcategory: '',
         plan: checked,
@@ -29,7 +32,7 @@ export default function PostAd(props) {
         tags: ''
     });
 
-    const {subcategory, category, plan, title, price, address, description, tags} = productData;
+    const {subcategory, category, lga_code, title, state_code, price, description, tags} = productData;
 
     const onChangeTitle = value => {
         setProductData({
@@ -49,10 +52,17 @@ export default function PostAd(props) {
     //         phone: value
     //     });
     // };
-    const onChangeAddress = value => {
+
+    const onChangeState = value => {
         setProductData({
             ...productData,
-            address: value
+            state_code: value
+        });
+    };
+    const onChangeLga = value => {
+        setProductData({
+            ...productData,
+            lga_code: value
         });
     };
     const onChangeCategory = value => {
@@ -111,8 +121,7 @@ export default function PostAd(props) {
             .then(res => {
                 setCategoryData(res.data.categories);
             })
-            .catch(error => {
-            });
+            .catch(error => {});
     };
 
     // ==============SUBCATEGORY LIST STATE =========
@@ -131,12 +140,58 @@ export default function PostAd(props) {
                     .then(res => {
                         setSubCategoryData(res.data.subcategories);
                     })
-                    .catch(error => {
-                    });
+                    .catch(error => {});
             };
             loadSubCategory();
         },
         [productData, setSubCategoryData]
+    );
+
+    //========= call user profile api to get country_code to fatch state data==========
+    let url = 'https://bellefu.com/api/user/profile/details';
+    const loadProfile = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
+        await setToken(tokenn);
+        axios
+            .get(url, {
+                headers: {
+                    Authorization: `Bearer ${tokenn}`,
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                }
+            })
+            .then(res => {
+                setProfile(res.data.user);
+                setLoading(false);
+                let stateUrl = `https://bellefu.com/api/${res.data.user.country_code}/state/list`;
+
+                axios.get(stateUrl).then(res => {
+                    setStateData(res.data.states);
+                });
+            })
+            .catch(e => {});
+    };
+
+    //========call lga api ==============
+    let lgaUrl = `https://bellefu.com/api/${profile.country_code}/${productData.state_code}/lga/list`;
+
+    useEffect(
+        () => {
+            async function loadLga() {
+                await axios.get(lgaUrl).then(res => {
+                    setLgaData(res.data.lgas);
+                });
+            }
+            loadLga();
+        },
+        [productData, setLgaData]
+    );
+
+    useEffect(
+        () => {
+            loadProfile();
+        },
+        [stateData.length]
     );
 
     const onSubmitHandle = () => {
@@ -175,14 +230,16 @@ export default function PostAd(props) {
             })
             .catch(error => {
                 setLoading(false);
-              
+
                 if (error.response.data.errors.verification) {
                     Alert.alert(`${error.response.data.errors.verification}`);
-                  
-                }else if(error.response.data){
-                    Alert.alert('All field are required, check  for any empty field and fill up');
+                } else if (error.response.data) {
+                    Alert.alert(
+                        'Something went wrong',
+                        'All field are required, check  for any empty field and fill up. Upload Image is not to be empty. Any of this can be the casue of the error.'
+                    );
                 }
-                console.log()
+                console.log();
             });
     };
 
@@ -247,18 +304,56 @@ export default function PostAd(props) {
                             </Picker>
                         </TouchableOpacity>
                         <TextInput
+                            style={{marginBottom: 30}}
                             mode="outlined"
                             label="Title"
                             value={title}
                             onChangeText={value => onChangeTitle(value)}
                         />
-                        <TextInput
-                            style={styles.input}
-                            mode="outlined"
-                            label="Location"
-                            value={address}
-                            onChangeText={value => onChangeAddress(value)}
-                        />
+                        <View style={{marginBottom: 30}}>
+                            <Text>State</Text>
+                            <TouchableOpacity
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    borderRadius: 4,
+                                    height: 60,
+                                    opacity: 4
+                                }}>
+                                <Picker
+                                    selectedValue={state_code}
+                                    borderStyle="solid"
+                                    onValueChange={value => onChangeState(value)}>
+                                    <Picker.Item label=">>>select state<<<" />
+                                    {stateData.map(data => (
+                                        <Picker.Item key={data.code} label={data.name} value={data.code} />
+                                    ))}
+                                </Picker>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{marginBottom: 5}}>
+                            <Text>City</Text>
+                            <TouchableOpacity
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    borderRadius: 4,
+                                    height: 60,
+                                    opacity: 4
+                                }}>
+                                <Picker
+                                    selectedValue={lga_code}
+                                    borderStyle="solid"
+                                    onValueChange={value => onChangeLga(value)}>
+                                    <Picker.Item label=">>>select city<<<" />
+                                    {lgaData.map(data => (
+                                        <Picker.Item key={data.code} label={data.name} value={data.code} />
+                                    ))}
+                                </Picker>
+                            </TouchableOpacity>
+                        </View>
+
                         {/* <TextInput
                             style={styles.input}
                             mode="outlined"

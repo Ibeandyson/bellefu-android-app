@@ -116,7 +116,7 @@ const ProductList = React.memo(props => {
                                             backgroundColor: '#000000',
                                             padding: 5,
                                             fontSize: 11,
-                                            fontWeight: 'bold'
+                                            fontWeight: 'bold',
                                         }}>
                                         OUT OF STOCK
                                     </Text>
