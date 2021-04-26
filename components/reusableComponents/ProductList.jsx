@@ -116,7 +116,7 @@ const ProductList = React.memo(props => {
                                             backgroundColor: '#000000',
                                             padding: 5,
                                             fontSize: 11,
-                                            fontWeight: 'bold',
+                                            fontWeight: 'bold'
                                         }}>
                                         OUT OF STOCK
                                     </Text>
@@ -140,7 +140,7 @@ const ProductList = React.memo(props => {
                             </View>
                             <Paragraph style={{fontSize: 10.5, maxWidth: 160}}>
                                 <Text style={{color: '#666968'}} ellipsizeMode="tail" numberOfLines={1}>
-                                    {props.item.address && props.item.address.substring(0, 20)}...
+                                    {props.item.admin1 && props.item.admin1.substring(0, 20)}...
                                 </Text>
                             </Paragraph>
                         </View>
