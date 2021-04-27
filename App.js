@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import SplashScreen from 'react-native-splash-screen';
-import {StyleSheet, TouchableOpacity, View, StatusBar} from 'react-native';
+import {StyleSheet, View, StatusBar} from 'react-native';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
