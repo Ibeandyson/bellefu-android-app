@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet,ImageBackground, TouchableOpacity} from 'react-native';
-import {Card, Paragraph, Button,} from 'react-native-paper';
+import {View, Text, StyleSheet, ImageBackground, TouchableOpacity} from 'react-native';
+import {Card, Paragraph, Button} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -45,81 +45,79 @@ const ProductList = React.memo(props => {
                             source={{
                                 uri: `https://bellefu.com/images/products/${props.item.slug}/${props.item.images[0]}`
                             }}>
-                                <View>
-                            <View
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 5,
-                                    right: 0,
-                                    bottom: 0,
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'flex-start'
-                                }}>
-                                {props.item.plan === 'urgent' ? (
-                                    <Text
-                                        style={{
-                                            color: '#ffffff',
-                                            backgroundColor: 'red',
-                                            padding: 5,
-                                            borderRadius: 10,
-                                            fontSize: 11,
-                                            fontWeight: 'bold'
-                                        }}>
-                                        {props.item.plan}
-                                    </Text>
-                                ) : null}
-                                {props.item.plan === 'highlighted' ? (
-                                    <Text
-                                        style={{
-                                            color: '#ffffff',
-                                            backgroundColor: '#76ba1b',
-                                            padding: 5,
-                                            borderRadius: 10,
-                                            fontSize: 11,
-                                            fontWeight: 'bold'
-                                        }}>
-                                        {props.item.plan}
-                                    </Text>
-                                ) : null}
-                                {props.item.plan === 'featured' ? (
-                                    <Text
-                                        style={{
-                                            color: '#ffffff',
-                                            backgroundColor: '#ffa500',
-                                            padding: 5,
-                                            fontSize: 11,
-                                            borderRadius: 10,
-                                            fontWeight: 'bold'
-                                        }}>
-                                        {props.item.plan}
-                                    </Text>
-                                ) : null}
-
-                                
-                            </View>
-                            <View
-                                style={{
-                                    position: 'absolute',
-                                    top: 60,
-                                    left: 5,
-                                    right: 0,
-                                    bottom: 0,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
+                            <View>
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 5,
+                                        right: 0,
+                                        bottom: 0,
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'flex-start'
+                                    }}>
+                                    {props.item.plan === 'urgent' ? (
+                                        <Text
+                                            style={{
+                                                color: '#ffffff',
+                                                backgroundColor: 'red',
+                                                padding: 5,
+                                                borderRadius: 10,
+                                                fontSize: 11,
+                                                fontWeight: 'bold'
+                                            }}>
+                                            {props.item.plan}
+                                        </Text>
+                                    ) : null}
+                                    {props.item.plan === 'highlighted' ? (
+                                        <Text
+                                            style={{
+                                                color: '#ffffff',
+                                                backgroundColor: '#76ba1b',
+                                                padding: 5,
+                                                borderRadius: 10,
+                                                fontSize: 11,
+                                                fontWeight: 'bold'
+                                            }}>
+                                            {props.item.plan}
+                                        </Text>
+                                    ) : null}
+                                    {props.item.plan === 'featured' ? (
+                                        <Text
+                                            style={{
+                                                color: '#ffffff',
+                                                backgroundColor: '#ffa500',
+                                                padding: 5,
+                                                fontSize: 11,
+                                                borderRadius: 10,
+                                                fontWeight: 'bold'
+                                            }}>
+                                            {props.item.plan}
+                                        </Text>
+                                    ) : null}
+                                </View>
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        top: 60,
+                                        left: 5,
+                                        right: 0,
+                                        bottom: 0,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
                                     {props.item.inStock === false ? (
-                                    <Text
-                                        style={{
-                                            color: '#ffffff',
-                                            backgroundColor: '#000000',
-                                            padding: 5,
-                                            fontSize: 11,
-                                            fontWeight: 'bold'
-                                        }}>
-                                        OUT OF STOCK
-                                    </Text>
-                                ) : null}
+                                        <Text
+                                            style={{
+                                                color: '#ffffff',
+                                                backgroundColor: '#000000',
+                                                padding: 5,
+                                                fontSize: 11,
+                                                fontWeight: 'bold'
+                                            }}>
+                                            OUT OF STOCK
+                                        </Text>
+                                    ) : null}
                                 </View>
                             </View>
                         </ImageBackground>
@@ -138,9 +136,13 @@ const ProductList = React.memo(props => {
                                 <SimpleLineIcons name="location-pin" size={12} color="#666968" />
                             </View>
                             <Paragraph style={{fontSize: 10.5, maxWidth: 160}}>
-                                <Text style={{color: '#666968'}} ellipsizeMode="tail" numberOfLines={1}>
-                                    {props.item.admin1.name && props.item.admin1.name.substring(0, 20)}...
-                                </Text>
+                                {props.item.admin1 || props.item.admin1 !== null ? (
+                                    <Text style={{color: '#666968'}} ellipsizeMode="tail" numberOfLines={1}>
+                                        {props.item.admin1.name && props.item.admin1.name.substring(0, 20)}...
+                                    </Text>
+                                ) : (
+                                    <Text />
+                                )}
                             </Paragraph>
                         </View>
                         <View style={[styles.icons, {alignItems: 'center', marginTop: 7}]}>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import SplashScreen from 'react-native-splash-screen';
-import {StyleSheet, View, StatusBar} from 'react-native';
+import {StyleSheet, Linking, View, StatusBar,Text} from 'react-native';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -47,6 +47,8 @@ const theme = {
 
 
 
+
+
 const Stack = createStackNavigator();
 
 export default function App(props) {
@@ -62,6 +64,18 @@ export default function App(props) {
     getToken();
   }, []);
 
+ 
+  const config = {
+    screens: {
+      Landing: 'home',
+    },
+  };
+  
+  const linking = {
+    prefixes: ["mychat://"],
+    config 
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -72,7 +86,7 @@ export default function App(props) {
       />
       <Provider store={store}>
         <PaperProvider theme={theme}>
-          <NavigationContainer>
+          <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
             <Stack.Navigator
               initialRouteName="Landing"
               screenOptions={{
@@ -97,7 +111,7 @@ export default function App(props) {
               <Stack.Screen
                 name="Home"
                 options={{headerShown: false}}
-                component={Landing}
+                component={Landing} 
               />
               <Stack.Screen
                 name="Links"
@@ -119,6 +133,7 @@ export default function App(props) {
                 name="Detail"
                 options={{headerShown: true}}
                 component={ProductDetail}
+                path='product_detail/:id'
               />
               <Stack.Screen
                 name="Filter"
