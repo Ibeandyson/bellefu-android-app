@@ -100,7 +100,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <View>
+        <View style={{flex: 1, padding: 10}}>
             {componentToShow === false ? (
                 <View>
                     <View style={{marginBottom: 30}}>

@@ -215,9 +215,9 @@ const Login = ({navigation}) => {
             </View>
             
 
-            {/* <TouchableOpacity>
+            <TouchableOpacity  onPress={() => navigation.navigate('Forgotpassword')}>
                 <Text style={{color: '#009387', marginTop:15}}>Forgot password?</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <View style={styles.button}>
                 <TouchableOpacity
                     style={[styles.signIn, {
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     },
     action: {
         flexDirection: 'row',
-        marginTop: 10,
+        marginTop: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#f2f2f2',
         paddingBottom: 5
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        marginTop: 50
+        marginTop: 10
     },
     signIn: {
         width: '100%',
