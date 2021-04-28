@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {View, Text, Alert} from 'react-native';
 import {Button, TextInput, ActivityIndicator} from 'react-native-paper';
-import axios from "axios"
+import axios from 'axios';
+import {set} from 'react-native-reanimated';
 
-const ForgotPassword = () => {
+const ForgotPassword = ({navigation}) => {
     const [requestData, setRequestData] = useState({
         email: ''
     });
@@ -19,6 +20,9 @@ const ForgotPassword = () => {
     const [loading, setLoading] = useState(false);
 
     // ==========================ALL EMAIL SUBMITION FUNCTIONS ==============
+    const ResendMail = () => {
+        setComponentToShow(false);
+    };
     const {email} = requestData;
     const onEmailChange = value => {
         setRequestData({
@@ -41,7 +45,7 @@ const ForgotPassword = () => {
                 console.log(res);
                 setComponentToShow(true);
                 setLoading(false);
-                Alert.alert('Successfully', `an email has been sent to the submitted mail, check mail`);
+                Alert.alert('Successful', `an email has been sent to the submitted email, check mail to get otp code`);
             })
             .catch(error => {
                 console.log(error);
@@ -59,6 +63,7 @@ const ForgotPassword = () => {
         });
     };
     const onOtpSubmit = () => {
+        setLoading(true);
         const payload = new FormData();
         payload.append('code', otpData.code);
         payload.append('email', requestData.email);
@@ -67,11 +72,12 @@ const ForgotPassword = () => {
             .then(res => {
                 console.log(res);
                 setComponentToShow_2(true);
+                setLoading(false);
             })
             .catch(e => {
                 Alert.alert('Error', `something went wrong`);
                 console.log(e);
-                setloading(false);
+                setLoading(false);
             });
     };
 
@@ -90,6 +96,7 @@ const ForgotPassword = () => {
         });
     };
     const onPasswordSubmit = () => {
+        setLoading(true);
         const payload = new FormData();
         payload.append('code', otpData.code);
         payload.append('email', requestData.email);
@@ -99,8 +106,9 @@ const ForgotPassword = () => {
             .post('https://bellefu.com/api/auth/password_reset', payload)
             .then(res => {
                 console.log(res);
+                setLoading(false);
                 Alert.alert(
-                    'Successfully',
+                    'Successful',
                     `Your password have reset. You can now login with the new password.`,
                     [
                         {
@@ -114,11 +122,23 @@ const ForgotPassword = () => {
                         cancelable: true
                     }
                 );
+                setComponentToShow(false);
+                setComponentToShow_2(false);
+                setOtpData({
+                    code: ''
+                });
+                setPasswordData({
+                    password: '',
+                    c_password: ''
+                });
+                setRequestData({
+                    email: ''
+                });
             })
             .catch(e => {
                 Alert.alert('Error', `something went wrong`);
                 console.log(e);
-                setloading(false);
+                setLoading(false);
             });
     };
 
@@ -181,6 +201,17 @@ const ForgotPassword = () => {
                                 icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
                                 <Text style={{color: 'white'}}>Send</Text>
                             </Button>
+                            <Button
+                                style={{
+                                    marginTop: 50,
+                                    color: 'white',
+                                    backgroundColor: '#ffa500'
+                                }}
+                                onPress={() => ResendMail()}
+                                mode="contained"
+                                icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
+                                <Text style={{color: 'white'}}>Resend mail</Text>
+                            </Button>
                         </View>
                     ) : (
                         <View>
@@ -189,6 +220,7 @@ const ForgotPassword = () => {
                                 <TextInput
                                     style={{marginBottom: 30}}
                                     value={password}
+                                    secureTextEntry={true}
                                     mode="outlined"
                                     name="password"
                                     label="password"
@@ -201,6 +233,7 @@ const ForgotPassword = () => {
                                 <TextInput
                                     style={{marginBottom: 30}}
                                     value={c_password}
+                                    secureTextEntry={true}
                                     mode="outlined"
                                     name="c_password"
                                     label="password"
