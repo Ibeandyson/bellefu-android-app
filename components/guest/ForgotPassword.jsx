@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, Alert} from 'react-native';
-import {Button, TextInput} from 'react-native-paper';
+import {Button, TextInput, ActivityIndicator} from 'react-native-paper';
+import axios from "axios"
 
 const ForgotPassword = () => {
     const [requestData, setRequestData] = useState({
@@ -15,6 +16,7 @@ const ForgotPassword = () => {
     });
     const [componentToShow, setComponentToShow] = useState(false);
     const [componentToShow_2, setComponentToShow_2] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     // ==========================ALL EMAIL SUBMITION FUNCTIONS ==============
     const {email} = requestData;
@@ -38,9 +40,13 @@ const ForgotPassword = () => {
             .then(res => {
                 console.log(res);
                 setComponentToShow(true);
+                setLoading(false);
+                Alert.alert('Successfully', `an email has been sent to the submitted mail, check mail`);
             })
             .catch(error => {
                 console.log(error);
+                setLoading(false);
+                Alert.alert('Error', `something went wrong`);
             });
     };
 
@@ -63,6 +69,7 @@ const ForgotPassword = () => {
                 setComponentToShow_2(true);
             })
             .catch(e => {
+                Alert.alert('Error', `something went wrong`);
                 console.log(e);
                 setloading(false);
             });
@@ -92,15 +99,36 @@ const ForgotPassword = () => {
             .post('https://bellefu.com/api/auth/password_reset', payload)
             .then(res => {
                 console.log(res);
+                Alert.alert(
+                    'Successfully',
+                    `Your password have reset. You can now login with the new password.`,
+                    [
+                        {
+                            text: 'Login',
+                            onPress: () => {
+                                navigation.navigate('Login');
+                            }
+                        }
+                    ],
+                    {
+                        cancelable: true
+                    }
+                );
             })
             .catch(e => {
+                Alert.alert('Error', `something went wrong`);
                 console.log(e);
                 setloading(false);
             });
     };
 
     return (
-        <View style={{flex: 1, padding: 10}}>
+        <View style={{flex: 1, padding: 20}}>
+            {loading && (
+                <View>
+                    <ActivityIndicator animating={true} color="rgba(49, 180, 4, 1)" />
+                </View>
+            )}
             {componentToShow === false ? (
                 <View>
                     <View style={{marginBottom: 30}}>
@@ -123,7 +151,7 @@ const ForgotPassword = () => {
                         onPress={onEmailSubmit}
                         mode="contained"
                         icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
-                        <Text style={{color: 'white'}}> Post</Text>
+                        <Text style={{color: 'white'}}>Send</Text>
                     </Button>
                 </View>
             ) : (
@@ -141,7 +169,7 @@ const ForgotPassword = () => {
                                     onChangeText={value => onCodeChange(value)}
                                 />
                             </View>
-                            
+
                             <Button
                                 style={{
                                     marginTop: 5,
@@ -151,12 +179,12 @@ const ForgotPassword = () => {
                                 onPress={onOtpSubmit}
                                 mode="contained"
                                 icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
-                                <Text style={{color: 'white'}}> Post</Text>
+                                <Text style={{color: 'white'}}>Send</Text>
                             </Button>
                         </View>
                     ) : (
                         <View>
-                           <View style={{marginBottom: 30}}>
+                            <View style={{marginBottom: 30}}>
                                 <Text>Enter New Password</Text>
                                 <TextInput
                                     style={{marginBottom: 30}}
@@ -186,12 +214,12 @@ const ForgotPassword = () => {
                                     color: 'white',
                                     backgroundColor: '#ffa500'
                                 }}
-                                onPress={onOtpSubmit}
+                                onPress={onPasswordSubmit}
                                 mode="contained"
                                 icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
-                                <Text style={{color: 'white'}}> Post</Text>
+                                <Text style={{color: 'white'}}> send </Text>
                             </Button>
-                           </View>
+                        </View>
                     )}
                 </View>
             )}
