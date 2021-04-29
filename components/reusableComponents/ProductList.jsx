@@ -136,7 +136,7 @@ const ProductList = React.memo(props => {
                                 <SimpleLineIcons name="location-pin" size={12} color="#666968" />
                             </View>
                             <Paragraph style={{fontSize: 10.5, maxWidth: 160}}>
-                                {props.item.admin1 || props.item.admin1 !== null ? (
+                                {props.item.admin1 !== null ? (
                                     <Text style={{color: '#666968'}} ellipsizeMode="tail" numberOfLines={1}>
                                         {props.item.admin1.name && props.item.admin1.name.substring(0, 20)}...
                                     </Text>

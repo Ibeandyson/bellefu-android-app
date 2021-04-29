@@ -181,12 +181,12 @@ export default function ProductDetail(props) {
     };
 
     let url = 'https://bellefu.com/api/product/show';
-   
+
     useEffect(
         () => {
             setLoading(true);
             axios
-                .get(`${url}/${props.route.params.item.slug }`, {
+                .get(`${url}/${props.route.params.item.slug}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json'
@@ -441,6 +441,14 @@ export default function ProductDetail(props) {
                                 Conditions apply)
                             </Text>
                         </View>
+                    </View>
+                    <View style={{paddingHorizontal: 80, paddingTop: 20}}>
+                        <Button
+                            onPress={() => props.navigation.navigate('Tips')}
+                            mode="outlined"
+                            style={{borderColor: 'gray', flexDirection: 'row', justifyContent: 'center'}}>
+                            <Text style={{color: 'gray', fontSize: 13}}>View More...</Text>
+                        </Button>
                     </View>
                     <View style={{paddingHorizontal: 80, paddingTop: 20}}>
                         <Button
