@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, Alert} from 'react-native';
 import {Button, TextInput, ActivityIndicator} from 'react-native-paper';
 import axios from 'axios';
-import {set} from 'react-native-reanimated';
+
 
 const ForgotPassword = ({navigation}) => {
     const [requestData, setRequestData] = useState({
@@ -42,7 +42,6 @@ const ForgotPassword = ({navigation}) => {
                 }
             })
             .then(res => {
-                console.log(res);
                 setComponentToShow(true);
                 setLoading(false);
                 Alert.alert('Successful', `an email has been sent to the submitted email, check mail to get otp code`);
@@ -70,7 +69,6 @@ const ForgotPassword = ({navigation}) => {
         axios
             .post('https://bellefu.com/api/auth/validate_password_reset_code', payload)
             .then(res => {
-                console.log(res);
                 setComponentToShow_2(true);
                 setLoading(false);
             })
@@ -105,7 +103,6 @@ const ForgotPassword = ({navigation}) => {
         axios
             .post('https://bellefu.com/api/auth/password_reset', payload)
             .then(res => {
-                console.log(res);
                 setLoading(false);
                 Alert.alert(
                     'Successful',
