@@ -1,11 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
-import {Card, Paragraph, Divider, ActivityIndicator} from 'react-native-paper';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import {View, Text, StyleSheet} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import Moment from 'react-moment';
 import Axios from 'axios';
-// import Moment from 'react-moment';
 import Preloader from '../guest/Preloader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AdTableItem from './AdTableItem';
@@ -71,6 +67,9 @@ export default function AdTable(props) {
             });
     }
 
+
+
+   
     useEffect(() => {
         loadAd()
     }, []);
@@ -93,7 +92,7 @@ export default function AdTable(props) {
                             onEndReachedThreshold={0.5}
                             renderItem={({item, index}) => (
 
-                                <AdTableItem styles={styles} item={item} onAdDelete={onAdDelete} token={token} key={item.slug} {...props}/>
+                                <AdTableItem styles={styles} item={item} onAdDelete={onAdDelete}  loadAd={loadAd} token={token} key={item.slug} {...props}/>
                             )}
                         />
                     )}
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start'
     },
     like: {
-        paddingLeft: 100,
+        paddingLeft: 50,
         paddingTop: 5,
         color: '#ffa500'
     },
