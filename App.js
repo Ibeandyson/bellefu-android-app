@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import SplashScreen from 'react-native-splash-screen';
-import {StyleSheet, Linking, View, StatusBar, Text} from 'react-native';
+import {StyleSheet,  View, StatusBar} from 'react-native';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -37,6 +37,7 @@ import VideoCall from './components/user/Video';
 import Notification from './components/user/Notification';
 import ChangePassword from './components/user/ChangePassword';
 import Forgotpassword from './components/guest/ForgotPassword';
+import SafetyTips from "./components/guest/SafetyTips"
 
 const theme = {
     ...DefaultTheme,
@@ -73,11 +74,14 @@ export default function App(props) {
                 path: 'register'
             },
             Forgotpassword: {
-                path: 'Forgotpassword'
-            }
+                path: 'reset_password'
+            },
+            Tips: {
+                path: 'safety_tips'
+            },
         }
     };
-
+   
     const linking = {
         prefixes: ['https://bellefu.com'],
         config
@@ -131,6 +135,7 @@ export default function App(props) {
                                 component={Forgotpassword}
                             />
                             <Stack.Screen name="Detail" options={{headerShown: true}} component={ProductDetail} />
+                            <Stack.Screen name="Tips" options={{headerShown: true}} component={SafetyTips} />
                             <Stack.Screen name="Filter" options={{headerShown: true}} component={FillterForm} />
                             <Stack.Screen name="Login" options={{headerShown: false}} component={Login} />
                             <Stack.Screen name="Signup" options={{headerShown: false}} component={Registration} />

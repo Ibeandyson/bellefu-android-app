@@ -444,6 +444,14 @@ export default function ProductDetail(props) {
                     </View>
                     <View style={{paddingHorizontal: 80, paddingTop: 20}}>
                         <Button
+                            onPress={() => props.navigation.navigate('Tips')}
+                            mode="outlined"
+                            style={{borderColor: 'gray', flexDirection: 'row', justifyContent: 'center'}}>
+                            <Text style={{color: 'gray', fontSize: 13}}>View More...</Text>
+                        </Button>
+                    </View>
+                    <View style={{paddingHorizontal: 80, paddingTop: 20}}>
+                        <Button
                             onPress={showModal1}
                             mode="outlined"
                             style={{borderColor: 'gray', flexDirection: 'row', justifyContent: 'center'}}>
