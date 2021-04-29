@@ -158,13 +158,12 @@ export default function UpadateProfile(props) {
         payload.append('bio', updateData.bio);
         console.log(imageUri);
 
-        if(Object.keys(imageUri).length){
+        if (Object.keys(imageUri).length) {
             payload.append(`avatar`, {
                 uri: Platform.OS === 'ios' ? `file:///${imageUri.path}` : imageUri.path,
                 type: 'image/jpeg',
                 name: 'image.jpg'
             });
-
         }
 
         axios({
@@ -195,7 +194,6 @@ export default function UpadateProfile(props) {
                     )
                 );
             });
-
     };
 
     return (

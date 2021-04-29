@@ -3,7 +3,6 @@ import {View, Text, Alert} from 'react-native';
 import {Button, TextInput, ActivityIndicator} from 'react-native-paper';
 import axios from 'axios';
 
-
 const ForgotPassword = ({navigation}) => {
     const [requestData, setRequestData] = useState({
         email: ''

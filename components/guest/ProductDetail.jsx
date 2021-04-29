@@ -181,12 +181,12 @@ export default function ProductDetail(props) {
     };
 
     let url = 'https://bellefu.com/api/product/show';
-   
+
     useEffect(
         () => {
             setLoading(true);
             axios
-                .get(`${url}/${props.route.params.item.slug }`, {
+                .get(`${url}/${props.route.params.item.slug}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json'
