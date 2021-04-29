@@ -106,7 +106,7 @@ const ForgotPassword = ({navigation}) => {
                 setLoading(false);
                 Alert.alert(
                     'Successful',
-                    `Your password have reset. You can now login with the new password.`,
+                    `Your password have reset is completed. You can now login with the new password.`,
                     [
                         {
                             text: 'Login',
