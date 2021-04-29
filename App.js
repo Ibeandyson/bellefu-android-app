@@ -74,14 +74,6 @@ export default function App(props) {
             },
             Forgotpassword: {
                 path: 'Forgotpassword'
-            },
-            Detail: {
-                path: 'product_detail/:slug',
-                params: {
-                    item: {
-                        slug: slug => `${slug}`
-                    }
-                }
             }
         }
     };
