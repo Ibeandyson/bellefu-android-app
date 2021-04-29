@@ -11,47 +11,43 @@ export default function AdTable(props) {
     const [products, setProducts] = useState([]);
     const [nextPageUrl, setNextPageUrl] = useState('');
     const [status, setStatus] = useState(false);
-    const [loading, setLoading] = useState(true)
-    const [token, setToken] = useState('')
-
+    const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState('');
 
     const nextData = () => {
         if (nextPageUrl === null) {
-          return;
+            return;
         } else {
-          Axios.get(nextPageUrl, {
-            headers: {
-              Authorization: token !== undefined ? `Bearer ${token}` : "hfh",
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }).then((res) => {
-            setProducts(res.data.products);
-            setNextPageUrl(res.data.products.next_page_url);
-            setAd(ad.concat(...res.data.products.data));
-          });
+            Axios.get(nextPageUrl, {
+                headers: {
+                    Authorization: token !== undefined ? `Bearer ${token}` : 'hfh',
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                }
+            }).then(res => {
+                setProducts(res.data.products);
+                setNextPageUrl(res.data.products.next_page_url);
+                setAd(ad.concat(...res.data.products.data));
+            });
         }
-      };
+    };
 
-      const onAdDelete = (slug) => {
-		setAd((ads) =>
-      	ads.filter((ad) => ad.slug !== slug)
-    );
-    }
+    const onAdDelete = slug => {
+        setAd(ads => ads.filter(ad => ad.slug !== slug));
+    };
 
     let url = 'https://bellefu.com/api/user/product/list';
 
     const loadAd = async () => {
-        let tokenn = await AsyncStorage.getItem('user')
-        await setToken(tokenn)
-        Axios
-            .get(url, {
-                headers: {
-                    Authorization: `Bearer ${tokenn}`,
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json'
-                }
-            })
+        let tokenn = await AsyncStorage.getItem('user');
+        await setToken(tokenn);
+        Axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${tokenn}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        })
             .then(res => {
                 setProducts(res.data.products);
                 setAd(res.data.products.data);
@@ -65,39 +61,41 @@ export default function AdTable(props) {
                 setStatus('No Ad');
                 setAd([]);
             });
-    }
+    };
 
-
-
-   
     useEffect(() => {
-        loadAd()
+        loadAd();
     }, []);
 
     return (
         <View>
-           
-                <View>
-                    {loading ? (
-                        <Preloader />
-                    ) : status ? (
-                        <View style={{marginTop: 50, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <Text style={{fontSize: 20}}>No Item</Text>
-                        </View>
-                    ) : (
-                        <FlatList
-                            data={ad}
-                            keyExtractor={item => item.slug}
-                            onEndReached={nextData}
-                            onEndReachedThreshold={0.5}
-                            renderItem={({item, index}) => (
-
-                                <AdTableItem styles={styles} item={item} onAdDelete={onAdDelete}  loadAd={loadAd} token={token} key={item.slug} {...props}/>
-                            )}
-                        />
-                    )}
-                </View>
-           
+            <View>
+                {loading ? (
+                    <Preloader />
+                ) : status ? (
+                    <View style={{marginTop: 50, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <Text style={{fontSize: 20}}>No Item</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={ad}
+                        keyExtractor={item => item.slug}
+                        onEndReached={nextData}
+                        onEndReachedThreshold={0.5}
+                        renderItem={({item, index}) => (
+                            <AdTableItem
+                                styles={styles}
+                                item={item}
+                                onAdDelete={onAdDelete}
+                                loadAd={loadAd}
+                                token={token}
+                                key={item.slug}
+                                {...props}
+                            />
+                        )}
+                    />
+                )}
+            </View>
         </View>
     );
 }
