@@ -123,6 +123,26 @@ export default function Verification(props) {
                 setRequestLoading(false);
                 setShowCodeInput(true);
                 setSeconds(80);
+                if (res) {
+                    Alert.alert(
+                        'Successfully',
+                        `Verification Pin has been sent to this : ${number}`,
+                        [
+                            {
+                                text: 'Continue',
+                                onPress: () => {
+                                    setOTPrequeastAlertFalse();
+                                }
+                            }
+                        ],
+                        {
+                            cancelable: true,
+                            onDismiss: () => {
+                                setOTPrequeastAlertFalse();
+                            }
+                        }
+                    );
+                }
             })
             .catch(error => {
                 console.log('this is error: ', error);
@@ -171,10 +191,6 @@ export default function Verification(props) {
             });
     };
 
-    const setOTPrequeastAlertFalse = () => {
-        setShowNumber(false);
-    };
-
     // =======FUNCTION TO MAKE A CALL FOR CODE =========
     const onCallRequest = async () => {
         let tokenn = await AsyncStorage.getItem('user');
@@ -193,6 +209,26 @@ export default function Verification(props) {
                 setShowCodeInput(true);
                 setcall(true);
                 setSeconds(180);
+                if (res) {
+                    Alert.alert(
+                        'Successfully',
+                        `A call will made to this : ${number} shortly`,
+                        [
+                            {
+                                text: 'Continue',
+                                onPress: () => {
+                                    setOTPrequeastAlertFalse();
+                                }
+                            }
+                        ],
+                        {
+                            cancelable: true,
+                            onDismiss: () => {
+                                setOTPrequeastAlertFalse();
+                            }
+                        }
+                    );
+                }
             })
             .catch(error => {
                 console.log('this is error: ', error);
@@ -276,27 +312,6 @@ export default function Verification(props) {
 
             {error.length > 0 ? Alert.alert(`${error}`) : null}
 
-            {showNumber === true ? (
-                Alert.alert(
-                    'Successfully',
-                    `an action have been made to this number: ${number}`,
-                    [
-                        {
-                            text: 'Close',
-                            onPress: () => {
-                                setOTPrequeastAlertFalse();
-                            }
-                        }
-                    ],
-                    {
-                        cancelable: true,
-                        onDismiss: () => {
-                            setOTPrequeastAlertFalse();
-                        }
-                    }
-                )
-            ) : null}
-
             {/* =========OTP START===== */}
             {componentToShow === 'phone' ? (
                 <View>
@@ -377,7 +392,7 @@ export default function Verification(props) {
                                             onPress={onCodeRequest}
                                             mode="contained"
                                             style={{backgroundColor: '#ffa500'}}>
-                                            <Text style={{color: 'white'}}>Request Code SMS</Text>
+                                            <Text style={{color: 'white'}}>Verify Via SMS</Text>
                                         </Button>
                                     </View>
                                 </View>
@@ -394,7 +409,7 @@ export default function Verification(props) {
                                             onPress={onCallRequest}
                                             mode="contained"
                                             style={{backgroundColor: '#ffa500'}}>
-                                            <Text style={{color: 'white'}}>Request CALL CODE</Text>
+                                            <Text style={{color: 'white'}}>Verify Via Call</Text>
                                         </Button>
                                     </View>
                                 </View>
