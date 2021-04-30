@@ -237,7 +237,7 @@ export default function EditAd(props) {
         const payload = new FormData();
         payload.append('title', productData.title);
         payload.append('price', productData.price);
-        payload.append('phone', productData.phone);
+        // payload.append('phone', productData.phone);
         payload.append('address', productData.address);
         payload.append('category', productData.category);
         payload.append('subcategory', productData.subcategory);

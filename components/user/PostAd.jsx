@@ -247,10 +247,10 @@ console.log("post ad", error.response.data.errors)
                         'All field are required, check  for any empty field and fill up. Upload Image is not to be empty. Any of this can be the casue of the error.'
                     );
                 }
-                console.log();
+                
             });
     };
-
+    console.log(success);
     useEffect(() => {
         async function getToken() {
             let tokenn = await AsyncStorage.getItem('user');
@@ -261,7 +261,7 @@ console.log("post ad", error.response.data.errors)
     useEffect(
         () => {
             loadCategory();
-            if (success.is_upgradable === true && productDetail.product_slug && productData.product_plan > 0) {
+            if (success && success.is_upgradable  === true) {
                 props.navigation.navigate('Payment', {productDetail});
             }
         },
