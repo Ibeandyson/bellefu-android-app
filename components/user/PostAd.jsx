@@ -23,8 +23,8 @@ export default function PostAd(props) {
         title: '',
         price: '',
         phone: '',
-        state_code: '',
-        lga_code: '',
+        admin1_code: '',
+        admin2_code: '',
         category: '',
         subcategory: '',
         plan: checked,
@@ -32,7 +32,7 @@ export default function PostAd(props) {
         tags: ''
     });
 
-    const {subcategory, category, lga_code, title, state_code, price, description, tags} = productData;
+    const {subcategory, category, admin1_code, title, admin2_code, price, description, tags, address} = productData;
 
     const onChangeTitle = value => {
         setProductData({
@@ -56,13 +56,13 @@ export default function PostAd(props) {
     const onChangeState = value => {
         setProductData({
             ...productData,
-            state_code: value
+            admin1_code: value
         });
     };
     const onChangeLga = value => {
         setProductData({
             ...productData,
-            lga_code: value
+            admin2_code: value
         });
     };
     const onChangeCategory = value => {
@@ -87,6 +87,12 @@ export default function PostAd(props) {
         setProductData({
             ...productData,
             tags: value
+        });
+    };
+    const onChangeAddress = value => {
+        setProductData({
+            ...productData,
+            address: value
         });
     };
     const onChangeDiscription = value => {
@@ -173,7 +179,7 @@ export default function PostAd(props) {
     };
 
     //========call lga api ==============
-    let lgaUrl = `https://bellefu.com/api/${profile.country_code}/${productData.state_code}/lga/list`;
+    let lgaUrl = `https://bellefu.com/api/${profile.country_code}/${productData.admin1_code}/lga/list`;
 
     useEffect(
         () => {
@@ -206,6 +212,8 @@ export default function PostAd(props) {
         payload.append('address', productData.address);
         payload.append('plan', checked);
         payload.append('description', productData.description);
+        payload.append('admin1_code', productData.admin1_code);
+        payload.append('admin2_code', productData.admin2_code);
         imagesUri.forEach((image, index) => {
             payload.append(`product_images[${index}]`, {
                 uri: Platform.OS === 'ios' ? `file:///${image.path}` : image.path,
@@ -230,7 +238,7 @@ export default function PostAd(props) {
             })
             .catch(error => {
                 setLoading(false);
-
+console.log("post ad", error.response.data.errors)
                 if (error.response.data.errors.verification) {
                     Alert.alert(`${error.response.data.errors.verification}`);
                 } else if (error.response.data) {
@@ -239,10 +247,10 @@ export default function PostAd(props) {
                         'All field are required, check  for any empty field and fill up. Upload Image is not to be empty. Any of this can be the casue of the error.'
                     );
                 }
-                console.log();
+                
             });
     };
-
+    console.log(success);
     useEffect(() => {
         async function getToken() {
             let tokenn = await AsyncStorage.getItem('user');
@@ -253,7 +261,7 @@ export default function PostAd(props) {
     useEffect(
         () => {
             loadCategory();
-            if (success.is_upgradable === true && productDetail.product_slug && productData.product_plan > 0) {
+            if (success && success.is_upgradable  === true) {
                 props.navigation.navigate('Payment', {productDetail});
             }
         },
@@ -310,7 +318,14 @@ export default function PostAd(props) {
                             value={title}
                             onChangeText={value => onChangeTitle(value)}
                         />
-                        <View style={{marginBottom: 30}}>
+                        <TextInput
+                            style={styles.input}
+                            mode="outlined"
+                            label="Location"
+                            value={address}
+                            onChangeText={value => onChangeAddress(value)}
+                        />
+                        <View style={{marginBottom: 30, marginTop:30}}>
                             <Text>State</Text>
                             <TouchableOpacity
                                 style={{
@@ -321,7 +336,7 @@ export default function PostAd(props) {
                                     opacity: 4
                                 }}>
                                 <Picker
-                                    selectedValue={state_code}
+                                    selectedValue={admin1_code}
                                     borderStyle="solid"
                                     onValueChange={value => onChangeState(value)}>
                                     <Picker.Item label=">>>select state<<<" />
@@ -343,7 +358,7 @@ export default function PostAd(props) {
                                     opacity: 4
                                 }}>
                                 <Picker
-                                    selectedValue={lga_code}
+                                    selectedValue={admin2_code}
                                     borderStyle="solid"
                                     onValueChange={value => onChangeLga(value)}>
                                     <Picker.Item label=">>>select city<<<" />

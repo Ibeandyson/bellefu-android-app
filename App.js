@@ -131,7 +131,7 @@ export default function App(props) {
                             />
                             <Stack.Screen
                                 name="Forgotpassword"
-                                options={{headerShown: true, title: 'Change Password'}}
+                                options={{headerShown: true, title: 'Reset Password'}}
                                 component={Forgotpassword}
                             />
                             <Stack.Screen name="Detail" options={{headerShown: true}} component={ProductDetail} />

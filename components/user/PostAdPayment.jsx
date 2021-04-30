@@ -146,7 +146,7 @@ export default function PostAdPayment(props) {
                             onPress={() => onSubmitHandle(paymentData)}
                             mode="contained"
                             icon={{source: 'filter-plus-outline', color: '#ffa500'}}>
-                            <Text style={{color: 'white'}}> Post</Text>
+                            <Text style={{color: 'white'}}>Boost Add</Text>
                         </Button>
                 </View>
 }
@@ -157,6 +157,10 @@ export default function PostAdPayment(props) {
 
 const styles = StyleSheet.create({
     contianer: {
-        padding: 20
+        padding: 20,
+        marginTop: 20
+    },
+    btn: {
+        marginTop: 20
     }
 });

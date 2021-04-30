@@ -131,14 +131,14 @@ export default function Verification(props) {
                             {
                                 text: 'Continue',
                                 onPress: () => {
-                                    setOTPrequeastAlertFalse();
+                                    
                                 }
                             }
                         ],
                         {
                             cancelable: true,
                             onDismiss: () => {
-                                setOTPrequeastAlertFalse();
+                           
                             }
                         }
                     );
@@ -173,7 +173,6 @@ export default function Verification(props) {
             }
         })
             .then(res => {
-                console.log(res);
                 setLoading(false);
                 setShowNumber(true);
                 setHeaderTitle('ID Verification');
@@ -212,19 +211,19 @@ export default function Verification(props) {
                 if (res) {
                     Alert.alert(
                         'Successfully',
-                        `A call will made to this : ${number} shortly`,
+                        `A call will be made to this : ${number} shortly`,
                         [
                             {
                                 text: 'Continue',
                                 onPress: () => {
-                                    setOTPrequeastAlertFalse();
+                                  
                                 }
                             }
                         ],
                         {
                             cancelable: true,
                             onDismiss: () => {
-                                setOTPrequeastAlertFalse();
+                         
                             }
                         }
                     );
@@ -305,6 +304,8 @@ export default function Verification(props) {
                 setError(error.response.data.message);
             });
     };
+
+    console.log("componentToShow" , componentToShow)
 
     return (
         <View>

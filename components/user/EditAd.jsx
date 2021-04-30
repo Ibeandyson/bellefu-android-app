@@ -16,6 +16,8 @@ export default function EditAd(props) {
     const [success, setSucess] = useState([]);
     const [productDetail, setProductDetail] = useState({});
     const [propsData, setPropsData] = useState('');
+    const [stateData, setStateData] = useState([]);
+    const [lgaData, setLgaData] = useState([]);
     const [productData, setProductData] = useState({
         title: '',
         price: '',
@@ -25,10 +27,12 @@ export default function EditAd(props) {
         subcategory: '',
         plan: checked,
         description: '',
-        tags: ''
+        tags: '',
+        admin1_code: "",
+        admin2_code: ""
     });
-
-    const {subcategory, category, plan, title, price, phone, address, description, tags} = productData;
+    const [profile, setProfile] = useState({});
+    const {subcategory, category,admin1_code, admin2_code, plan, title, price, phone, address, description, tags} = productData;
 
     let url = 'https://bellefu.com/api/product/show';
     const fetchProduct = () => {
@@ -51,7 +55,10 @@ export default function EditAd(props) {
                     phone: res.data.product.phone,
                     address: res.data.product.address,
                     description: res.data.product.description,
-                    tags: res.data.product.tags
+                    tags: res.data.product.tags,
+                    admin1_code: res.data.product.admin1_code,
+                    admin2_code: res.data.product.admin2_code
+                    
                 });
                 setChecked(res.data.product.plan)
             })
@@ -70,6 +77,18 @@ export default function EditAd(props) {
         setProductData({
             ...productData,
             price: value
+        });
+    };
+    const onChangeState = value => {
+        setProductData({
+            ...productData,
+            admin1_code: value
+        });
+    };
+    const onChangeLga = value => {
+        setProductData({
+            ...productData,
+            admin2_code: value
         });
     };
     const onChangePhone = value => {
@@ -126,6 +145,49 @@ export default function EditAd(props) {
         });
     };
 
+
+
+    //========= call user profile api to get country_code to fatch state data==========
+    let url_profile = 'https://bellefu.com/api/user/profile/details';
+    const loadProfile = async () => {
+        let tokenn = await AsyncStorage.getItem('user');
+        await setToken(tokenn);
+        axios
+            .get(url_profile, {
+                headers: {
+                    Authorization: `Bearer ${tokenn}`,
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                }
+            })
+            .then(res => {
+                setProfile(res.data.user);
+                setLoading(false);
+                let stateUrl = `https://bellefu.com/api/${res.data.user.country_code}/state/list`;
+
+                axios.get(stateUrl).then(res => {
+                    setStateData(res.data.states);
+                });
+            })
+            .catch(e => {});
+    };
+
+    //========call lga api ==============
+    let lgaUrl = `https://bellefu.com/api/${profile.country_code}/${productData.admin1_code}/lga/list`;
+
+    useEffect(
+        () => {
+            async function loadLga() {
+                await axios.get(lgaUrl).then(res => {
+                    setLgaData(res.data.lgas);
+                });
+            }
+            loadLga();
+        },
+        [productData, setLgaData]
+    );
+
+
     // ==============CATEGORY LIST STATE =========
 
     const [categoryData, setCategoryData] = useState([]);
@@ -175,13 +237,15 @@ export default function EditAd(props) {
         const payload = new FormData();
         payload.append('title', productData.title);
         payload.append('price', productData.price);
-        payload.append('phone', productData.phone);
+        // payload.append('phone', productData.phone);
         payload.append('address', productData.address);
         payload.append('category', productData.category);
         payload.append('subcategory', productData.subcategory);
         payload.append('address', productData.address);
         payload.append('plan', checked);
         payload.append('description', productData.description);
+        payload.append('admin1_code', productData.admin1_code);
+        payload.append('admin2_code', productData.admin2_code);
         imagesUri.forEach((image, index) => {
             payload.append(`product_images[${index}]`, {
                 uri: Platform.OS === 'ios' ? `file:///${image.path}` : image.path,
@@ -209,6 +273,7 @@ export default function EditAd(props) {
                 if (e.response.data) {
                     Alert.alert('All field are required, check  for any empty field and fill up');
                 }
+                console.log("post ad", e.response.data.errors)
             });
     };
 
@@ -222,6 +287,7 @@ export default function EditAd(props) {
     }, []);
     useEffect(
         () => {
+            loadProfile();
             loadCategory();
             fetchProduct();
             if (success.is_upgradable === true) {
@@ -286,13 +352,57 @@ export default function EditAd(props) {
                             value={address}
                             onChangeText={value => onChangeAddress(value)}
                         />
-                        <TextInput
+                        <View style={{marginBottom: 30,  marginTop:30}}>
+                            <Text>State</Text>
+                            <TouchableOpacity
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    borderRadius: 4,
+                                    height: 60,
+                                    opacity: 4
+                                }}>
+                                <Picker
+                                    selectedValue={admin1_code}
+                                    borderStyle="solid"
+                                    onValueChange={value => onChangeState(value)}>
+                                    <Picker.Item label=">>>select state<<<" />
+                                    {stateData.map(data => (
+                                        <Picker.Item key={data.code} label={data.name} value={data.code} />
+                                    ))}
+                                </Picker>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{marginBottom: 5}}>
+                            <Text>City</Text>
+                            <TouchableOpacity
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: 'gray',
+                                    borderRadius: 4,
+                                    height: 60,
+                                    opacity: 4
+                                }}>
+                                <Picker
+                                    selectedValue={admin2_code}
+                                    borderStyle="solid"
+                                    onValueChange={value => onChangeLga(value)}>
+                                    <Picker.Item label=">>>select city<<<" />
+                                    {lgaData.map(data => (
+                                        <Picker.Item key={data.code} label={data.name} value={data.code} />
+                                    ))}
+                                </Picker>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* <TextInput
                             style={styles.input}
                             mode="outlined"
                             label="Phone Number"
                             value={phone}
                             onChangeText={value => onChangePhone(value)}
-                        />
+                        /> */}
                         <TextInput
                             style={styles.input}
                             mode="outlined"
