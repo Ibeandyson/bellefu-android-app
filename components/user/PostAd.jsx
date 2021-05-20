@@ -238,16 +238,17 @@ export default function PostAd(props) {
             })
             .catch(error => {
                 setLoading(false);
-console.log("post ad", error.response.data.errors)
+                console.log('post ad', error.response.data.errors);
                 if (error.response.data.errors.verification) {
                     Alert.alert(`${error.response.data.errors.verification}`);
-                } else if (error.response.data) {
+                } else if(error.response.data.errors.avatar) {
+                    Alert.alert(`${error.response.data.errors.avatar}`);
+                } else {
                     Alert.alert(
                         'Something went wrong',
                         'All field are required, check  for any empty field and fill up. Upload Image is not to be empty. Any of this can be the casue of the error.'
                     );
                 }
-                
             });
     };
     console.log(success);
@@ -261,7 +262,7 @@ console.log("post ad", error.response.data.errors)
     useEffect(
         () => {
             loadCategory();
-            if (success && success.is_upgradable  === true) {
+            if (success && success.is_upgradable === true) {
                 props.navigation.navigate('Payment', {productDetail});
             }
         },
@@ -325,7 +326,7 @@ console.log("post ad", error.response.data.errors)
                             value={address}
                             onChangeText={value => onChangeAddress(value)}
                         />
-                        <View style={{marginBottom: 30, marginTop:30}}>
+                        <View style={{marginBottom: 30, marginTop: 30}}>
                             <Text>State</Text>
                             <TouchableOpacity
                                 style={{
