@@ -127,7 +127,7 @@ export default function EditAd(props) {
             tags: value
         });
     };
-    const onChangeDiscription = value => {
+    const onChangeDescription = value => {
         setProductData({
             ...productData,
             description: value
@@ -422,9 +422,9 @@ export default function EditAd(props) {
                             multiline={true}
                             numberOfLines={5}
                             mode="outlined"
-                            label="Discription"
+                            label="Description"
                             value={description}
-                            onChangeText={value => onChangeDiscription(value)}
+                            onChangeText={value => onChangeDescription(value)}
                         />
 
                         <ScrollView horizontal={true}>
@@ -480,7 +480,7 @@ export default function EditAd(props) {
                                 color="#76ba1b"
                                 onChangeText={value => onChangePlan(value)}
                             />
-                            <Text style={{marginTop: 10}}>Featuerd</Text>
+                            <Text style={{marginTop: 10}}>Featured</Text>
                         </View>
                         <View style={{flexDirection: 'row', padding: 10}}>
                             <RadioButton
@@ -490,7 +490,7 @@ export default function EditAd(props) {
                                 color="#76ba1b"
                                 onChangeText={value => onChangePlan(value)}
                             />
-                            <Text style={{marginTop: 10}}>Heigthligted</Text>
+                            <Text style={{marginTop: 10}}>Highlighted</Text>
                         </View>
                         <Button
                             style={styles.btn}
